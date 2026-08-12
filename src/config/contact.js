@@ -18,7 +18,7 @@
 
 export const CONTACT_CONFIG = {
   // Replace this with your actual Web3Forms access key:
-  ACCESS_KEY: "YOUR_ACCESS_KEY_HERE",
+  ACCESS_KEY: "4397dbdd-0ec0-4300-9b4e-962a297de84a",
 
   // The Web3Forms submission endpoint (do not change):
   ENDPOINT: "https://api.web3forms.com/submit",
