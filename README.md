@@ -131,58 +131,17 @@ To replace the downloadable resume PDF:
 
 ---
 
-## 🚀 Production Build
+## 🌐 Deploying to Production
 
-To compile assets into optimized static files inside the `dist/` directory, run:
-```bash
-npm run build
-```
+Since this portfolio builds into purely static HTML, CSS, and JS files, it can be deployed for free on major hosting providers:
 
-## 👀 Preview Production Build
+### Vercel
+1. Install Vercel CLI: `npm install -g vercel`.
+2. Run `vercel` in the project root.
+3. Link to your project and select **Vite** preset (it will automatically configure `npm run build` and output folder `dist`).
 
-To serve the generated `dist/` build locally and verify correctness before deployment, run:
-```bash
-npm run preview
-```
-
----
-
-## 🌐 Deployment — Netlify
-
-This project is configured and ready to be deployed as a static site to Netlify via continuous deployment from GitHub.
-
-* **GitHub repository**: https://github.com/saagar-gautam-3/portfolio-react.git
-* **Build command**: `npm run build`
-* **Publish directory**: `dist`
-
-### Netlify Deployment Steps
-1. Go to [Netlify](https://www.netlify.com/).
-2. Sign in to your account.
-3. Choose **Add new site** -> **Import an existing project**.
-4. Select **GitHub** as the provider and authorize Netlify.
-5. Select the `saagar-gautam-3/portfolio-react` repository.
-6. Select the `main` branch.
-7. Netlify will automatically detect the settings from `netlify.toml`, but ensure the configuration is:
-   * **Build command**: `npm run build`
-   * **Publish directory**: `dist`
-8. Click **Deploy Site**.
-
-### Automatic Deployment Behavior
-The deployment is connected directly to your GitHub repository. Netlify provides Continuous Deployment (CD). After the initial setup, the workflow is entirely automated:
-
-1. You make changes to your local code.
-2. Push changes to the `main` branch:
-   ```bash
-   git add .
-   git commit -m "update portfolio"
-   git push origin main
-   ```
-3. Netlify automatically detects the push, triggers `npm run build`, and deploys the generated `dist/` folder to your live website within seconds.
-
-### Custom Domain
-Once deployed, you can connect a custom domain to your Netlify site for free (you only need to own the domain name).
-1. In your Netlify dashboard, go to your site settings.
-2. Navigate to **Domain management** -> **Domains**.
-3. Click **Add custom domain** and enter your domain name.
-4. Netlify will guide you to update your domain registrar's DNS settings (either by pointing an A record to Netlify's IP or using Netlify's name servers).
-5. Once DNS propagates, Netlify will automatically provision a free SSL certificate via Let's Encrypt.
+### Netlify
+1. Log in to your Netlify account and click **Add new site** -> **Import an existing project**.
+2. Select your repository provider (GitHub, GitLab, etc.).
+3. Set the **Build Command** to `npm run build` and **Publish Directory** to `dist`.
+4. Click **Deploy Site**.
