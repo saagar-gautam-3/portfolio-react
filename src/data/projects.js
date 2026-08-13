@@ -11,7 +11,7 @@ export const projects = [
       "Integrated payment workflows, order tracking systems, and notification functionalities.",
       "Designed optimized database schemas with backend validation and secure API communication."
     ],
-    github: "https://github.com/sagargautam0626/food-delivery-backend", // placeholder
+    github: "https://github.com/saagar-gautam-3/food-delivery-backend", // placeholder
     live: null
   },
   {
@@ -26,7 +26,7 @@ export const projects = [
       "Built modular backend services with async database operations and scalable architecture.",
       "Designed secure authentication systems and optimized backend workflows."
     ],
-    github: "https://github.com/sagargautam0626/event-scheduling-api", // placeholder
+    github: "https://github.com/saagar-gautam-3/event-scheduling-api", // placeholder
     live: null
   },
   {
@@ -41,7 +41,7 @@ export const projects = [
       "Implemented enterprise-level authorization architecture for scalable applications.",
       "Optimized database relationships and permission validation logic."
     ],
-    github: "https://github.com/sagargautam0626/dynamic-rbac-system", // placeholder
+    github: "https://github.com/saagar-gautam-3/dynamic-rbac-system", // placeholder
     live: null
   },
   {
