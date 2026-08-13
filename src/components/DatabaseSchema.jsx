@@ -49,6 +49,15 @@ export default function DatabaseSchema() {
     setHoveredField(null);
   };
 
+  const handleClick = (fieldId) => {
+    if (hoveredField === fieldId) {
+      setHoveredField(null);
+    } else {
+      setHoveredField(fieldId);
+    }
+  };
+
+
   // Determine if a field should be highlighted based on hover state
   const isHighlighted = (tableName, colName, refStr, isPk, isFk) => {
     if (!hoveredField) return false;
@@ -104,6 +113,7 @@ export default function DatabaseSchema() {
                     }`}
                     onMouseEnter={() => handleMouseEnter(colId)}
                     onMouseLeave={handleMouseLeave}
+                    onClick={() => handleClick(colId)}
                   >
                     <span className="col-key">
                       {col.isPk && <Key size={10} className="pk-icon" title="Primary Key" />}
@@ -120,7 +130,7 @@ export default function DatabaseSchema() {
       </div>
       <div className="schema-tip">
         <span className="tip-badge">TIP</span>
-        <span className="tip-text">Hover over key fields (e.g. `role_id` or `id`) to trace relational references.</span>
+        <span className="tip-text">Hover or tap over key fields (e.g. `role_id` or `id`) to trace relational references.</span>
       </div>
     </div>
   );
