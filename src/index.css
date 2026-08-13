@@ -2254,6 +2254,117 @@ html[data-theme="light"] .nav-mobile-drawer-inner {
   box-shadow: 0 0 8px rgba(239, 68, 68, 0.1) !important;
 }
 
+/* Phone Input Group */
+.phone-input-group {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+}
+
+.country-code-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--border-color);
+  border-right: none;
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  padding: 10px 28px 10px 12px;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+  min-width: 160px;
+  max-width: 200px;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%2394a3b8' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px 6px;
+}
+
+.country-code-select:focus {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 8px rgba(0, 242, 254, 0.1);
+}
+
+.country-code-select:hover {
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+.country-code-select option {
+  background: #0f1729;
+  color: var(--text-primary);
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.phone-input-group input[type="tel"] {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-color);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 10px 14px;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  outline: none;
+  transition: all var(--transition-fast);
+  min-width: 0;
+}
+
+.phone-input-group input[type="tel"]:focus {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 8px rgba(0, 242, 254, 0.1);
+}
+
+.phone-input-group input[type="tel"].input-error {
+  border-color: rgba(239, 68, 68, 0.5) !important;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Connected border highlight: when either side is focused */
+.phone-input-group:focus-within .country-code-select {
+  border-color: var(--accent-cyan);
+}
+
+.phone-input-group:focus-within input[type="tel"] {
+  border-color: var(--accent-cyan);
+}
+
+.field-optional {
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-left: 8px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+  text-transform: uppercase;
+}
+
+@media (max-width: 480px) {
+  .phone-input-group {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .country-code-select {
+    border-right: 1px solid var(--border-color);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    border-bottom: none;
+    max-width: 100%;
+    min-width: unset;
+    width: 100%;
+  }
+
+  .phone-input-group input[type="tel"] {
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  }
+}
+
 .success-message-block {
   display: flex;
   flex-direction: column;

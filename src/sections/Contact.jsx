@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import emailjs from "@emailjs/browser";
 import {
   Mail,
   Phone,
@@ -10,15 +11,66 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { profile } from "../data/profile";
-import { CONTACT_CONFIG } from "../config/contact";
+import {
+  CONTACT_CONFIG,
+  EMAILJS_CONFIG,
+  COUNTRY_CODES,
+} from "../config/contact";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const EMPTY_FORM = {
   sender_name: "",
   sender_email: "",
+  country_code: COUNTRY_CODES[0].code, // Nepal (+977) default
+  sender_phone: "",
   subject: "",
   message: "",
+};
+
+// ── Helpers ──────────────────────────────────────────────────
+/** Strip all non-digit characters from a phone string */
+const stripPhone = (val) => val.replace(/[^\d]/g, "");
+
+/** Look up the COUNTRY_CODES entry by its dial code string */
+const getCountryByCode = (code) =>
+  COUNTRY_CODES.find((c) => c.code === code) || COUNTRY_CODES[0];
+
+/**
+ * Send a professional thank-you email via EmailJS.
+ * Fails silently — the user already got the success screen.
+ */
+const sendThankYouEmail = async ({ name, email, subject }) => {
+  // Skip if EmailJS is not configured
+  if (
+    EMAILJS_CONFIG.SERVICE_ID === "YOUR_EMAILJS_SERVICE_ID" ||
+    EMAILJS_CONFIG.TEMPLATE_ID === "YOUR_EMAILJS_TEMPLATE_ID" ||
+    EMAILJS_CONFIG.PUBLIC_KEY === "YOUR_EMAILJS_PUBLIC_KEY"
+  ) {
+    console.info(
+      "[Contact] EmailJS not configured — skipping thank-you email."
+    );
+    return;
+  }
+
+  try {
+    await emailjs.send(
+      EMAILJS_CONFIG.SERVICE_ID,
+      EMAILJS_CONFIG.TEMPLATE_ID,
+      {
+        to_email: email,
+        to_name: name,
+        from_name: CONTACT_CONFIG.OWNER_NAME,
+        from_title: CONTACT_CONFIG.OWNER_TITLE,
+        from_email: CONTACT_CONFIG.OWNER_EMAIL,
+        reply_subject: subject,
+      },
+      EMAILJS_CONFIG.PUBLIC_KEY
+    );
+    console.info("[Contact] Thank-you email sent to", email);
+  } catch (err) {
+    console.warn("[Contact] Thank-you email failed:", err);
+  }
 };
 
 export default function Contact() {
@@ -37,6 +89,16 @@ export default function Contact() {
     } else if (!EMAIL_REGEX.test(formData.sender_email)) {
       errors.sender_email = "Please enter a valid email address.";
     }
+
+    // Phone validation (optional, but validated if provided)
+    const digits = stripPhone(formData.sender_phone);
+    if (digits.length > 0) {
+      const country = getCountryByCode(formData.country_code);
+      if (digits.length < country.minLen || digits.length > country.maxLen) {
+        errors.sender_phone = `Enter ${country.minLen}–${country.maxLen} digits for ${country.name}.`;
+      }
+    }
+
     if (!formData.subject.trim()) errors.subject = "Subject is required.";
     if (!formData.message.trim()) errors.message = "Message is required.";
     return errors;
@@ -56,6 +118,14 @@ export default function Contact() {
     }
   };
 
+  // ── Format phone for display ──────────────────────────────────
+  const getFormattedPhone = () => {
+    const digits = stripPhone(formData.sender_phone);
+    if (!digits) return null;
+    const country = getCountryByCode(formData.country_code);
+    return `${country.code} ${digits}`;
+  };
+
   // ── Submission ────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,20 +140,24 @@ export default function Contact() {
     setFieldErrors({});
     setStatus("loading");
 
+    const phoneDisplay = getFormattedPhone();
+    const submittedAt = new Date().toLocaleString("en-US", {
+      dateStyle: "full",
+      timeStyle: "short",
+    });
+
     const emailBody = [
       `New message from your portfolio contact form.`,
       ``,
       `Name:     ${formData.sender_name}`,
       `Email:    ${formData.sender_email}`,
+      ...(phoneDisplay ? [`Phone:    ${phoneDisplay}`] : []),
       `Subject:  ${formData.subject}`,
       ``,
       `Message:`,
       formData.message,
       ``,
-      `Received: ${new Date().toLocaleString("en-US", {
-        dateStyle: "full",
-        timeStyle: "short",
-      })}`,
+      `Received: ${submittedAt}`,
     ].join("\n");
 
     try {
@@ -111,6 +185,12 @@ export default function Contact() {
 
       if (res.ok && data.success) {
         setStatus("success");
+        // Fire-and-forget: send thank-you email to the submitter
+        sendThankYouEmail({
+          name: formData.sender_name,
+          email: formData.sender_email,
+          subject: formData.subject,
+        });
       } else {
         // Web3Forms returns a message field on failure
         throw new Error(data.message || "Submission failed.");
@@ -133,7 +213,18 @@ export default function Contact() {
   };
 
   // ── Live JSON preview ─────────────────────────────────────────
-  const getLiveJson = () => JSON.stringify(formData, null, 2);
+  const getLiveJson = () => {
+    const preview = {
+      sender_name: formData.sender_name,
+      sender_email: formData.sender_email,
+      phone: formData.sender_phone
+        ? `${formData.country_code} ${formData.sender_phone}`
+        : "",
+      subject: formData.subject,
+      message: formData.message,
+    };
+    return JSON.stringify(preview, null, 2);
+  };
 
   // ── Render ────────────────────────────────────────────────────
   return (
@@ -272,6 +363,49 @@ export default function Contact() {
                 </div>
               </div>
 
+              {/* sender_phone (country code + number) */}
+              <div className="form-group">
+                <label className="font-mono" htmlFor="sender_phone">
+                  sender_phone
+                  <span className="field-optional">optional</span>
+                </label>
+                <div className="phone-input-group">
+                  <select
+                    id="country_code"
+                    name="country_code"
+                    value={formData.country_code}
+                    onChange={handleChange}
+                    className="country-code-select"
+                    disabled={status === "loading"}
+                  >
+                    {COUNTRY_CODES.map((c) => (
+                      <option key={`${c.code}-${c.name}`} value={c.code}>
+                        {c.flag} {c.name} ({c.code})
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    id="sender_phone"
+                    type="tel"
+                    name="sender_phone"
+                    value={formData.sender_phone}
+                    onChange={handleChange}
+                    placeholder={`e.g. ${
+                      "9".repeat(getCountryByCode(formData.country_code).minLen)
+                    }`}
+                    className={fieldErrors.sender_phone ? "input-error" : ""}
+                    disabled={status === "loading"}
+                    autoComplete="tel-national"
+                  />
+                </div>
+                {fieldErrors.sender_phone && (
+                  <span className="field-error-msg font-mono">
+                    <AlertCircle size={11} />
+                    {fieldErrors.sender_phone}
+                  </span>
+                )}
+              </div>
+
               {/* subject */}
               <div className="form-group">
                 <label className="font-mono" htmlFor="subject">
@@ -381,6 +515,9 @@ export default function Contact() {
                         message:
                           "Message delivered to sagargautam0626@gmail.com.",
                         reply_to: formData.sender_email,
+                        ...(getFormattedPhone()
+                          ? { sender_phone: getFormattedPhone() }
+                          : {}),
                         delivered_at: new Date().toISOString(),
                       },
                       null,
