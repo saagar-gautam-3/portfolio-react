@@ -1,6 +1,8 @@
 export const projects = [
   {
     id: "food-delivery",
+    image: "/assets/projects/food-delivery-new.jpg",
+    imageAlt: "A food delivery customer receiving an order; illustrative cover, not a screenshot of the project.",
     title: "Food Delivery Platform",
     category: "FastAPI Backend Architecture",
     description: "Built a production-ready, highly performant food delivery backend using asynchronous web frameworks, custom ORMs, and secure authorization setups.",
@@ -11,11 +13,13 @@ export const projects = [
       "Integrated payment workflows, order tracking systems, and notification functionalities.",
       "Designed optimized database schemas with backend validation and secure API communication."
     ],
-    github: "https://github.com/saagar-gautam-3/food-delivery-backend", // placeholder
+    github: null,
     live: null
   },
   {
     id: "event-scheduling",
+    image: "/assets/projects/event-scheduling.jpg",
+    imageAlt: "A calendar and schedule on a laptop; illustrative cover, not a screenshot of the project.",
     title: "Event Scheduling System",
     category: "FastAPI Backend Infrastructure",
     description: "Developed a scalable, asynchronous event scheduling system with automated workflows and enterprise access permission levels.",
@@ -26,11 +30,13 @@ export const projects = [
       "Built modular backend services with async database operations and scalable architecture.",
       "Designed secure authentication systems and optimized backend workflows."
     ],
-    github: "https://github.com/saagar-gautam-3/event-scheduling-api", // placeholder
+    github: null,
     live: null
   },
   {
     id: "dynamic-rbac",
+    image: "/assets/projects/dynamic-rbac.jpg",
+    imageAlt: "Abstract cybersecurity and network visuals; illustrative cover, not a screenshot of the project.",
     title: "Enterprise Dynamic RBAC System",
     category: "Backend Architecture",
     description: "Designed a completely dynamic role-based access control engine with grouped permissions and runtime validation algorithms.",
@@ -41,11 +47,13 @@ export const projects = [
       "Implemented enterprise-level authorization architecture for scalable applications.",
       "Optimized database relationships and permission validation logic."
     ],
-    github: "https://github.com/saagar-gautam-3/dynamic-rbac-system", // placeholder
+    github: null,
     live: null
   },
   {
     id: "zyabaa-ecommerce",
+    image: "/assets/projects/zyabaa-ecommerce.jpg",
+    imageAlt: "A customer shopping in a boutique; illustrative cover, not a screenshot of Zyabaa.",
     title: "Zyabaa E-commerce Platform",
     category: "Full Stack Development",
     description: "Engineered a full-featured, consumer-facing e-commerce portal integrated with major Nepalese and global payment networks.",
@@ -58,10 +66,12 @@ export const projects = [
       "Optimized backend communication and API response performance."
     ],
     github: null,
-    live: "https://zyabaa.com" // placeholder
+    live: null
   },
   {
     id: "soaltee-hotel",
+    image: "/assets/projects/soaltee-hotel.jpg",
+    imageAlt: "A hotel lobby; illustrative cover, not an image from the Soaltee platform.",
     title: "Soaltee Hotel Platform",
     category: "Laravel Backend Development",
     description: "Maintained and added advanced booking, content management, and form-validation modules for a leading hospitality system.",
@@ -74,10 +84,12 @@ export const projects = [
       "Improved backend maintainability and database-driven dynamic page features."
     ],
     github: null,
-    live: "https://soaltee.com" // placeholder
+    live: null
   },
   {
     id: "nia-nepal",
+    image: "/assets/projects/nia-nepal.jpg",
+    imageAlt: "Colleagues reviewing documents at a laptop; illustrative cover, not a screenshot of NIA software.",
     title: "NIA Nepal System",
     category: "Laravel Backend Contribution",
     description: "Contributed to database-driven dashboard utilities, validation systems, and backend processing nodes.",
@@ -89,6 +101,7 @@ export const projects = [
       "Participated in debugging, testing, and deployment-related tasks."
     ],
     github: null,
-    live: "https://nia.gov.np" // placeholder
+    live: null
   }
 ];
+
