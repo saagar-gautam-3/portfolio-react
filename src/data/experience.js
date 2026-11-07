@@ -5,12 +5,12 @@ export const experience = [
     location: "Kathmandu, Nepal",
     period: "Aug 2025 — Present",
     responsibilities: [
-      "Developed and maintained production-ready RESTful APIs using FastAPI and Laravel.",
-      "Designed modular backend services with PostgreSQL and MySQL for scalable application workflows.",
-      "Implemented JWT authentication and RBAC authorization systems for secure access control.",
-      "Optimized database queries and backend workflows to improve API response efficiency.",
-      "Collaborated with frontend developers and deployment teams for production integrations.",
-      "Maintained clean and scalable backend architecture following modern engineering practices."
+      "Develop and maintain production-ready RESTful APIs using FastAPI and Laravel.",
+      "Design modular backend services with PostgreSQL and MySQL for scalable application workflows.",
+      "Implement JWT authentication and RBAC authorization systems for secure access control.",
+      "Optimize database queries and backend workflows to improve API response efficiency.",
+      "Collaborate with frontend developers and deployment teams for production integrations.",
+      "Maintain clean and scalable backend architecture following modern engineering practices."
     ],
     tech: ["FastAPI", "Laravel", "PostgreSQL", "MySQL", "JWT", "RBAC", "Docker"]
   },
