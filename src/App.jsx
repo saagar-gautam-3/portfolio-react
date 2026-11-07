@@ -1,70 +1,89 @@
-import React from "react";
-import { ThemeProvider } from "./context/ThemeContext";
-import Navbar from "./components/Navbar";
-import Hero from "./sections/Hero";
-import About from "./sections/About";
-import Skills from "./sections/Skills";
-import Experience from "./sections/Experience";
-import Projects from "./sections/Projects";
-import EducationCertifications from "./sections/EducationCertifications";
-import Contact from "./sections/Contact";
-import { Terminal } from "lucide-react";
+import { useState } from "react";
+import { ArrowDown, ArrowDownRight, ArrowRight, ArrowUpRight, Check, Code2, GraduationCap, MapPin, Menu, Send, X } from "lucide-react";
+import portrait from "./assets/Image.jpeg";
 import { profile } from "./data/profile";
+import { experience, education } from "./data/experience";
+import { skillCategories } from "./data/skills";
+import { projects } from "./data/projects";
+
+const nav = [["About", "about"], ["Stack", "stack"], ["Selected works", "selected-works"], ["Experience", "experience"], ["Nepal heritage", "nepal-heritage"], ["Contact", "contact"]];
+const codeSamples = {
+  python: { file: "fastapi_service.py", label: "Python / FastAPI", lines: ["from fastapi import FastAPI", "from sqlalchemy.ext.asyncio import AsyncSession", "", "app = FastAPI()", "", "@app.get('/health')", "async def health_check():", "    return {'status': 'healthy'}"] },
+  php: { file: "ServiceController.php", label: "PHP / Laravel", lines: ["<?php", "", "namespace App\\Http\\Controllers;", "", "class ServiceController", "{", "    public function health()", "    {", "        return response()->json(['status' => 'healthy']);", "    }", "}"] },
+  react: { file: "ContactForm.jsx", label: "React / JavaScript", lines: ["import { useState } from 'react';", "", "export function ContactForm() {", "  const [message, setMessage] = useState('');", "  return (", "    <form onSubmit={handleSubmit}>", "      <textarea value={message}", "        onChange={e => setMessage(e.target.value)} />", "      <button type='submit'>Send message</button>", "    </form>", "  );", "}"] },
+};
+
+function Eyebrow({ children, dark = false }) { return <span className={`eyebrow${dark ? " eyebrow-dark" : ""}`}><i />{children}</span>; }
+function SectionTop({ index, title, note, light = false }) { return <div className={`section-top${light ? " section-top-light" : ""}`}><div><Eyebrow>{index} / {title}</Eyebrow>{note && <p>{note}</p>}</div></div>; }
 
 export default function App() {
-  return (
-    <ThemeProvider>
-      {/* Decorative background grid and ambient radial lights */}
-      <div className="bg-grid-pattern"></div>
-      <div className="bg-radial-glow"></div>
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeCode, setActiveCode] = useState("python");
+  const [command, setCommand] = useState("");
+  const [output, setOutput] = useState(["// Portfolio terminal ready.", "// Try: help, about, stack, experience, contact"]);
+  const [form, setForm] = useState({ name: "", email: "", message: "", objective: "Backend API", scope: "Not specified" });
+  const [sent, setSent] = useState(false);
 
-      {/* Main Glassmorphic Navigation */}
-      <Navbar />
+  const runCommand = (event) => {
+    event?.preventDefault();
+    const value = command.trim().toLowerCase();
+    if (!value) return;
+    const responses = {
+      help: "Available: about, stack, experience, contact, clear",
+      about: profile.summary,
+      stack: skillCategories.map((group) => `${group.title}: ${group.skills.join(", ")}`).join(" | "),
+      experience: experience.map((job) => `${job.role} — ${job.company} (${job.period})`).join(" | "),
+      contact: profile.email,
+      clear: null,
+    };
+    setOutput(value === "clear" ? ["// Terminal cleared."] : [...output, `sagar@kathmandu:~$ ${value}`, responses[value] ?? `Command not found: ${value}. Type help for available commands.`]);
+    setCommand("");
+  };
 
-      {/* Structured Sections assembly */}
-      <main className="portfolio-main">
-        <Hero />
-        <About />
-        <Skills />
-        <Experience />
-        <Projects />
-        <EducationCertifications />
-        <Contact />
-      </main>
+  const submitMessage = (event) => {
+    event.preventDefault();
+    const subject = encodeURIComponent(`Portfolio inquiry: ${form.objective}`);
+    const body = encodeURIComponent(`Hello Sagar,\n\n${form.message}\n\nName: ${form.name}\nEmail: ${form.email}\nObjective: ${form.objective}\nScope: ${form.scope}`);
+    window.location.href = `mailto:${profile.email}?subject=${subject}&body=${body}`;
+    setSent(true);
+  };
 
-      {/* Premium Developer-themed Footer */}
-      <footer className="portfolio-footer border-top font-mono">
-        <div className="container footer-container">
-          <div className="footer-meta">
-            <div className="footer-logo">
-              <Terminal size={14} className="text-gradient-cyan" />
-              <span>sagargautam.dev</span>
-            </div>
-            <p className="footer-copy">
-              © {new Date().getFullYear()} {profile.name}. All rights reserved.
-            </p>
-          </div>
+  return <>
+    <header className="site-header reference-header">
+      <a className="brand" href="#home"><b>{profile.name}</b><small>27°42′N 85°19′E <i>//</i> {profile.location}</small></a>
+      <div className="availability"><span className="pulse" />{profile.title} <i>·</i> {profile.location}</div>
+      <nav className={menuOpen ? "nav open" : "nav"} aria-label="Main navigation">{nav.map(([label, id]) => <a key={id} href={`#${id}`} onClick={() => setMenuOpen(false)}>{label}</a>)}</nav>
+      <a className="header-cta" href="#contact">Initiate project <ArrowUpRight size={15} /></a>
+      <button className="menu-toggle" type="button" aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button>
+    </header>
 
-          <div className="footer-diagnostics">
-            <span className="diagnostic-item">
-              <span className="diagnostic-label">env:</span>
-              <span className="diagnostic-val text-green">production</span>
-            </span>
-            <span className="diagnostic-item">
-              <span className="diagnostic-label">db:</span>
-              <span className="diagnostic-val text-green">connected</span>
-            </span>
-            <span className="diagnostic-item">
-              <span className="diagnostic-label">ssl:</span>
-              <span className="diagnostic-val text-green">active</span>
-            </span>
-            <span className="diagnostic-item status-indicator-badge">
-              <span className="pulse-dot"></span>
-              <span className="text-green font-weight-bold">200 OK</span>
-            </span>
-          </div>
+    <main id="home">
+      <section className="hero section-dark">
+        <div className="hero-glow" /><div className="wrap hero-wrap">
+          <div className="hero-meta"><Eyebrow>ROOTED IN {profile.location.toUpperCase()} <span className="meta-divider">/</span> CONNECTED GLOBALLY</Eyebrow><span className="hero-meta-right"><span className="pulse" /> BACKEND ENGINEER</span></div>
+          <div className="hero-grid"><div className="hero-copy"><p className="hero-kicker">{profile.title}</p><h1>Building the<br /><span>future<span className="hero-comma">,</span></span></h1><h2>One reliable system at a time<span className="lime-dot">.</span></h2><p className="hero-summary">{profile.summary}</p><div className="hero-actions"><a className="button button-lime" href="#selected-works">Explore selected work <ArrowRight size={16} /></a><a className="button button-outline" href={profile.resumeUrl} download="Sagar_Gautam_CV.pdf">Download CV <ArrowDown size={15} /></a></div></div>
+            <div className="hero-art" role="img" aria-label="Animated lime digital globe, inspired by the Himalayas"><div className="art-glow" /><div className="art-orbit orbit-one" /><div className="art-orbit orbit-two" /><div className="art-orbit orbit-three" /><div className="globe"><div className="globe-lat lat-one" /><div className="globe-lat lat-two" /><div className="globe-lat lat-three" /><div className="globe-lon lon-one" /><div className="globe-lon lon-two" /><div className="globe-land" /><div className="globe-ridge" /></div><div className="hud hud-top"><span className="pulse" /> DIGITAL GLOBE <b>ACTIVE</b></div><div className="hud hud-bottom"><span><small>BASE</small><b>KATHMANDU</b></span><span><small>TIMEZONE</small><b>NPT / UTC+5:45</b></span><span><small>FOCUS</small><b>BACKEND</b></span></div><span className="art-coordinate coord-a">27°42′ N</span><span className="art-coordinate coord-b">85°19′ E</span><span className="art-cross cross-a">+</span><span className="art-cross cross-b">+</span></div>
+          </div><div className="hero-bottom"><span>01 <i /> INTRODUCTION</span><a href="#impact">SCROLL TO EXPLORE <ArrowDown size={13} /></a></div>
         </div>
-      </footer>
-    </ThemeProvider>
-  );
+      </section>
+
+      <section className="impact section-mid" id="impact"><div className="wrap"><div className="impact-grid"><article><b>3+</b><span>YEARS IN BACKEND DEVELOPMENT</span><small>Experience dates listed in portfolio</small></article><article><b>02</b><span>PROFESSIONAL ROLES</span><small>Growing through hands-on product work</small></article><article><b>06</b><span>FEATURED PROJECTS</span><small>Across APIs and web applications</small></article><article><b>06</b><span>TECHNICAL DOMAINS</span><small>Backend, data, security, architecture & more</small></article></div><div className="impact-marquee" aria-label="FastAPI, Laravel, Python, PostgreSQL, MySQL, Docker"><span>FASTAPI <i>✳</i> LARAVEL <i>✳</i> PYTHON <i>✳</i> POSTGRESQL <i>✳</i> MYSQL <i>✳</i> DOCKER <i>✳</i> REACT <i>✳</i></span></div></div></section>
+
+      <section className="about section-cream" id="about"><div className="wrap"><SectionTop index="01" title="ABOUT / IDENTITY" note="Engineering from Kathmandu, Nepal. Building thoughtful backend systems with care for structure, security, and long-term maintainability." light /><div className="about-grid"><div className="portrait-frame"><img src={portrait} alt={`Portrait of ${profile.name}`} /><span className="portrait-caption">{profile.location.toUpperCase()} <i>//</i> {profile.title.toUpperCase()}</span><span className="portrait-index">01 / 01</span></div><div className="about-copy"><span className="about-overline">A PRACTICAL, PEOPLE-FIRST APPROACH</span><h2>Forged with<br />architectural<br /><em>precision.</em></h2><p>{profile.summary}</p><p>My work spans Python and FastAPI, Laravel and PHP, relational databases, secure authentication, and modular application design.</p><div className="about-facts"><div><span>BASE OF OPERATIONS</span><b><MapPin size={15} /> {profile.location}</b></div><div><span>LANGUAGES</span><b>{profile.languages.map((item) => item.name).join(" · ")}</b></div><div><span>EDUCATION</span><b>{education[0]?.degree}</b></div></div><a className="text-link text-link-dark" href="#experience">Explore my experience <ArrowDownRight size={16} /></a></div></div></div></section>
+
+      <section className="skills section-light" id="stack"><div className="wrap"><SectionTop index="02" title="SKILLS / TECHNOLOGY ARSENAL" note="A considered toolkit for designing, building, and maintaining reliable web systems." /><div className="skill-grid">{skillCategories.map((group, i) => <article className="skill-card" key={group.title}><div className="skill-card-top"><span>0{i + 1} / 06</span><Code2 size={19} /></div><h3>{group.title}</h3><div className="skill-tags">{group.skills.map((skill) => <span key={skill}>{skill}</span>)}</div></article>)}</div>
+          <div className="terminal-panel"><div className="terminal-head"><div className="terminal-brand"><span className="terminal-dots"><i /><i /><i /></span><span>sagar@kathmandu: ~/portfolio</span></div><span className="terminal-status"><i /> INTERACTIVE TERMINAL</span></div><div className="terminal-tabs">{Object.entries(codeSamples).map(([key, sample]) => <button type="button" key={key} className={activeCode === key ? "active" : ""} onClick={() => setActiveCode(key)}>{sample.file}</button>)}</div><div className="terminal-body"><div className="code-pane"><div className="code-title">{codeSamples[activeCode].label}</div><pre>{codeSamples[activeCode].lines.map((line, i) => <span key={`${activeCode}-${i}`}><i>{String(i + 1).padStart(2, "0")}</i>{line || " "}{"\n"}</span>)}</pre></div><div className="stdout-pane"><div className="stdout-title">TERMINAL OUTPUT <span>READY</span></div><div className="stdout-lines" aria-live="polite">{output.map((line, i) => <div key={`${i}-${line.slice(0, 16)}`}>{line}</div>)}</div><form className="terminal-input" onSubmit={runCommand}><label htmlFor="terminal-command">sagar@ktm:~$</label><input id="terminal-command" value={command} onChange={(event) => setCommand(event.target.value)} placeholder="type 'help'" /><button type="submit" aria-label="Run terminal command"><ArrowRight size={15} /></button></form></div></div></div>
+        </div></section>
+
+      <section className="work section-dark" id="selected-works"><div className="wrap"><SectionTop index="03" title="SELECTED WORKS / PROJECT GALLERY" note="A selection of backend systems and product work from my portfolio." /><div className="work-heading"><h2>Purpose-built<br />digital products<span className="lime-dot">.</span></h2><p>Each project is an opportunity to solve a practical problem with thoughtful architecture and a careful implementation.</p></div><div className="project-grid">{projects.map((project, i) => <article className={`project-card project-card-${i + 1}`} key={project.id}><div className="project-visual"><span className="project-visual-index">PROJECT / 0{i + 1}</span><div className="project-visual-art"><span>{String(i + 1).padStart(2, "0")}</span><i /><b>{project.title.split(/\s+/).slice(0, 2).join(" ").toUpperCase()}</b></div><span className="project-visual-category">{project.category.toUpperCase()}</span></div><div className="project-content"><div className="project-category">{project.category}</div><h3>{project.title}</h3><p>{project.description}</p><ul>{project.contributions.slice(0, 3).map((item) => <li key={item}>{item}</li>)}</ul><div className="project-tags">{project.tech.slice(0, 5).map((tech) => <span key={tech}>{tech}</span>)}</div><div className="project-actions">{project.github && <a href={project.github} target="_blank" rel="noreferrer">View on GitHub <ArrowUpRight size={14} /></a>}{project.live && <a href={project.live} target="_blank" rel="noreferrer">View live project <ArrowUpRight size={14} /></a>}{!project.github && !project.live && <span>PROJECT DETAILS <i>//</i> IN PORTFOLIO</span>}</div></div></article>)}</div></div></section>
+
+      <section className="experience section-mid" id="experience"><div className="wrap"><SectionTop index="04" title="EXPERIENCE / CAREER TIMELINE" note="Professional experience building, supporting, and improving backend applications." /><div className="experience-intro"><h2>A track record<br />of steady growth<span className="lime-dot">.</span></h2><p>Developing my craft through collaborative teams and real product challenges.</p></div><div className="timeline">{experience.map((job, i) => <article className="timeline-item" key={`${job.company}-${job.period}`}><div className="timeline-index">0{i + 1}<span /></div><div className="timeline-main"><div className="timeline-meta"><span>{job.period}</span><span>{job.location}</span></div><h3>{job.role}</h3><h4>{job.company}</h4><ul>{job.responsibilities.map((item) => <li key={item}>{item}</li>)}</ul><div className="project-tags">{job.tech.map((tech) => <span key={tech}>{tech}</span>)}</div></div></article>)}</div><div className="education-inline"><GraduationCap size={18} /><div><span>EDUCATION</span><b>{education.map((item) => item.degree).join(" · ")}</b></div><a href="#nepal-heritage" aria-label="Continue to Nepal heritage"><ArrowDownRight size={17} /></a></div></div></section>
+
+      <section className="heritage section-dark" id="nepal-heritage"><div className="wrap"><SectionTop index="05" title="NEPAL HERITAGE / LOCAL PERSPECTIVE" note="Kathmandu is home. The perspective I bring to technology is shaped by curiosity, patience, and a strong sense of place." /><div className="heritage-grid"><div className="heritage-copy"><span className="heritage-mark">NEPAL <i>·</i> 27.7172° N / 85.3240° E</span><h2>Resilience shaped<br />by the Himalayas<span className="lime-dot">.</span></h2><p>Based in {profile.location}, I work across modern backend technologies and collaborative teams. My professional focus is on dependable APIs, secure access, and systems that are clear to extend and maintain.</p><div className="heritage-links"><a href={`mailto:${profile.email}`}>CONNECT FROM ANYWHERE <ArrowUpRight size={15} /></a><span>NEPAL TIME <b>NPT / UTC+5:45</b></span></div></div><div className="topographic" aria-label="Decorative topographic contour map"><div className="topo-lines" /><div className="topo-cross">+</div><div className="topo-pin"><MapPin size={18} /><span>KATHMANDU</span></div><div className="topo-label topo-label-a">HIMALAYAN RANGE<br />27°42′ N</div><div className="topo-label topo-label-b">KATHMANDU VALLEY<br />85°19′ E</div><div className="topo-scale"><i /><i /><i /><i /><span>0 — 50 — 100 KM</span></div></div></div></div></section>
+
+      <section className="contact section-cream" id="contact"><div className="wrap"><SectionTop index="06" title="TRANSMISSION / CONTACT" note="Have a project, an opportunity, or a question? Use the form or reach me directly." light /><div className="contact-grid"><div className="contact-copy"><h2>Have a system<br />to build?<br /><em>Let’s connect.</em></h2><p>I’d be glad to hear what you’re working on. Send me a few details and I’ll get back to you.</p><a className="email-link" href={`mailto:${profile.email}`}><span><small>DIRECT EMAIL</small><b>{profile.email}</b></span><ArrowUpRight size={21} /></a><div className="contact-socials"><a href={profile.linkedin} target="_blank" rel="noreferrer">LINKEDIN <ArrowUpRight size={13} /></a><a href={profile.github} target="_blank" rel="noreferrer">GITHUB <ArrowUpRight size={13} /></a><a href={`tel:${profile.phone}`}>PHONE <ArrowUpRight size={13} /></a></div></div><form className="contact-form" onSubmit={submitMessage}><div className="form-heading"><span>PROJECT SPECIFICATION FORM</span><h3>Initiate a conversation</h3></div><div className="form-row"><label>Your name<input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Your name" autoComplete="name" /></label><label>Email address<input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="you@example.com" autoComplete="email" /></label></div><fieldset><legend>Primary objective</legend><div className="objective-options">{["Backend API", "Web application", "Collaboration"].map((value) => <label key={value}><input type="radio" name="objective" value={value} checked={form.objective === value} onChange={(e) => setForm({ ...form, objective: e.target.value })} /><span>{value}</span></label>)}</div></fieldset><label>Project scope<select value={form.scope} onChange={(e) => setForm({ ...form, scope: e.target.value })}><option>Not specified</option><option>Short-term project</option><option>Product development</option><option>Ongoing collaboration</option><option>Full-time opportunity</option></select></label><label>Message<textarea rows="4" required value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="A little about your project, goals, and timeline..." /></label><div className="form-submit-row"><button type="submit" className="button button-dark">{sent ? <>Open your email app <Check size={16} /></> : <>Send message <Send size={15} /></>}</button><span>{sent ? `Prepared for ${profile.email}` : "OPENS YOUR EMAIL APP TO SEND"}</span></div></form></div></div></section>
+    </main>
+
+    <footer className="site-footer"><div className="wrap footer-main"><a className="brand" href="#home"><b>{profile.name}</b><small>{profile.title} <i>//</i> {profile.location}</small></a><div className="footer-links">{nav.map(([label, id]) => <a key={id} href={`#${id}`}>{label}</a>)}</div><a className="back-top" href="#home">BACK TO TOP <ArrowUpRight size={14} /></a></div><div className="wrap footer-bottom"><span>© {new Date().getFullYear()} {profile.name}</span><span>BUILT WITH CARE <b>✳</b></span></div></footer>
+  </>;
 }
